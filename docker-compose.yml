@@ -1,0 +1,7 @@
+services:
+  plan-wieik:
+    build: .
+    container_name: plan-wieik-pk
+    restart: unless-stopped
+    ports:
+      - "8080:80"

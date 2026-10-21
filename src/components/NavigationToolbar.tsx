@@ -153,7 +153,12 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
               type="button"
               className="apple-btn"
               onClick={handlePrev}
-              style={{ padding: '6px 10px', fontSize: '13px' }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: 'var(--apple-blue)',
+              }}
               title="Poprzedni"
             >
               <ChevronLeft size={16} />
@@ -179,7 +184,12 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
               type="button"
               className="apple-btn"
               onClick={handleNext}
-              style={{ padding: '6px 10px', fontSize: '13px' }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: 'var(--apple-blue)',
+              }}
               title="Dalej"
             >
               <span className="hide-on-mobile">Dalej</span>

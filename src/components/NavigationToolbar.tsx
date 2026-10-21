@@ -141,24 +141,12 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
       <div className="apple-card nav-toolbar-card">
         {/* Navigation Buttons: Wstecz, Dzisiaj, Dalej & Zjazd Dropdown */}
         <div className="nav-toolbar-top-row">
-          <div
-            style={{
-              display: 'inline-flex',
-              backgroundColor: 'var(--bg-pill)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '2px',
-            }}
-          >
+          {/* Navigation Buttons: Wstecz, Dzisiaj, Dalej */}
+          <div className="nav-btn-group">
             <button
               type="button"
-              className="apple-btn"
+              className="apple-btn nav-btn-item"
               onClick={handlePrev}
-              style={{
-                padding: '6px 10px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--apple-blue)',
-              }}
               title="Poprzedni"
             >
               <ChevronLeft size={16} />
@@ -167,14 +155,8 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
 
             <button
               type="button"
-              className="apple-btn"
+              className="apple-btn nav-btn-item nav-btn-today"
               onClick={handleToday}
-              style={{
-                padding: '6px 12px',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--apple-blue)',
-              }}
               title="Przejdź do dzisiaj"
             >
               Dzisiaj
@@ -182,14 +164,8 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
 
             <button
               type="button"
-              className="apple-btn"
+              className="apple-btn nav-btn-item"
               onClick={handleNext}
-              style={{
-                padding: '6px 10px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--apple-blue)',
-              }}
               title="Dalej"
             >
               <span className="hide-on-mobile">Dalej</span>
@@ -355,7 +331,56 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
           padding: 8px;
           box-shadow: var(--shadow-lg);
         }
+        /* Desktop: Separate individual pills */
+        .nav-btn-group {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: transparent;
+          padding: 0;
+        }
+        .nav-btn-item {
+          background-color: var(--bg-pill);
+          color: var(--apple-blue);
+          border-radius: var(--radius-sm);
+          padding: 6px 12px;
+          font-size: 13px;
+          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.15s ease;
+        }
+        .nav-btn-item:hover {
+          background-color: var(--border-subtle);
+        }
+        .nav-btn-today {
+          font-weight: 600;
+          padding: 6px 14px;
+        }
+
         @media (max-width: 680px) {
+          .nav-btn-group {
+            background-color: var(--bg-pill) !important;
+            border-radius: var(--radius-sm) !important;
+            padding: 2px !important;
+            gap: 0 !important;
+          }
+          .nav-btn-item {
+            background: transparent !important;
+            border-radius: var(--radius-xs) !important;
+            padding: 6px 10px !important;
+            gap: 0 !important;
+          }
+          .nav-btn-item .hide-on-mobile {
+            display: none !important;
+          }
+          .nav-btn-item:hover {
+            background-color: var(--border-subtle) !important;
+          }
+          .nav-btn-today {
+            padding: 6px 12px !important;
+          }
           .nav-toolbar-card {
             padding: 10px 12px !important;
             flex-direction: column !important;

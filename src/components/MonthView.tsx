@@ -74,17 +74,18 @@ export const MonthView: React.FC<MonthViewProps> = ({
 
   return (
     <div
+      className="month-view-container"
       style={{
         maxWidth: '1200px',
-        margin: '20px auto 40px auto',
-        padding: '0 20px',
+        margin: '16px auto 40px auto',
+        padding: '0 16px',
       }}
     >
       {/* Month Calendar Grid Card */}
       <div
-        className="apple-card"
+        className="apple-card month-card"
         style={{
-          padding: '16px',
+          padding: '14px',
           borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
         }}
@@ -95,7 +96,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
             display: 'grid',
             gridTemplateColumns: 'repeat(7, 1fr)',
             textAlign: 'center',
-            paddingBottom: '10px',
+            paddingBottom: '8px',
             borderBottom: '1px solid var(--border-subtle)',
           }}
         >
@@ -108,7 +109,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   fontSize: '12px',
                   fontWeight: 600,
                   color: isWeekendCol ? 'var(--apple-blue)' : 'var(--text-tertiary)',
-                  padding: '4px 0',
+                  padding: '2px 0',
                 }}
               >
                 {name}
@@ -122,8 +123,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: '4px',
-            paddingTop: '8px',
+            gap: '3px',
+            paddingTop: '6px',
           }}
         >
           {monthGrid.map((cell) => {
@@ -137,9 +138,10 @@ export const MonthView: React.FC<MonthViewProps> = ({
               <div
                 key={cell.dateStr}
                 onClick={() => onSelectDate(cell.dateStr)}
+                className="month-calendar-cell"
                 style={{
-                  minHeight: '80px',
-                  padding: '6px',
+                  minHeight: '76px',
+                  padding: '5px',
                   borderRadius: 'var(--radius-sm)',
                   backgroundColor: isSelected
                     ? 'rgba(0, 122, 255, 0.12)'
@@ -169,17 +171,19 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   }}
                 >
                   <span
+                    className="month-day-number"
                     style={{
-                      width: '24px',
-                      height: '24px',
+                      width: '22px',
+                      height: '22px',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: isToday || isSelected ? 700 : 500,
                       backgroundColor: isToday ? 'var(--apple-blue)' : 'transparent',
                       color: isToday ? '#FFFFFF' : 'var(--text-primary)',
+                      flexShrink: 0,
                     }}
                   >
                     {cell.dayNumber}
@@ -187,13 +191,15 @@ export const MonthView: React.FC<MonthViewProps> = ({
 
                   {zjazd && cell.isCurrentMonth && (
                     <span
+                      className="month-zjazd-tag"
                       style={{
                         fontSize: '9px',
                         fontWeight: 700,
                         backgroundColor: 'rgba(175, 82, 222, 0.16)',
                         color: 'var(--apple-purple)',
-                        padding: '1px 5px',
+                        padding: '1px 4px',
                         borderRadius: 'var(--radius-pill)',
+                        flexShrink: 0,
                       }}
                       title={zjazd.label}
                     >
@@ -204,36 +210,39 @@ export const MonthView: React.FC<MonthViewProps> = ({
 
                 {/* Day content: dots & count */}
                 {hasClasses && cell.isCurrentMonth && (
-                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <div
                       style={{
                         fontSize: '11px',
                         fontWeight: 600,
                         color: 'var(--apple-blue)',
                         lineHeight: 1,
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {daySessions.length} {daySessions.length === 1 ? 'zajęcia' : 'zajęć'}
+                      <span>{daySessions.length}</span>
+                      <span className="month-session-count-text"> {daySessions.length === 1 ? 'zajęcia' : 'zajęć'}</span>
                     </div>
 
                     {/* Colored dots per class type */}
-                    <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '2px', flexWrap: 'wrap' }}>
                       {daySessions.slice(0, 4).map((s) => {
                         const meta = getCategoryMeta(s.groupCategory)
                         return (
                           <span
                             key={s.id}
                             style={{
-                              width: '6px',
-                              height: '6px',
+                              width: '5px',
+                              height: '5px',
                               borderRadius: '50%',
                               backgroundColor: meta.color,
+                              flexShrink: 0,
                             }}
                           />
                         )
                       })}
                       {daySessions.length > 4 && (
-                        <span style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1 }}>
+                        <span style={{ fontSize: '8px', color: 'var(--text-tertiary)', lineHeight: 1 }}>
                           +{daySessions.length - 4}
                         </span>
                       )}

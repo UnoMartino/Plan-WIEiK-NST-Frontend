@@ -277,21 +277,49 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
         {/* Footer Actions */}
         <div
           style={{
-            padding: '16px 20px',
+            padding: '14px 18px',
             borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
             gap: '8px',
-            flexWrap: 'wrap',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Primary Action Button - Full Width */}
+          <button
+            type="button"
+            className="apple-btn apple-btn-primary"
+            onClick={() => downloadIcsFile([session], `${session.subject}_${session.startDate}.ics`)}
+            style={{
+              width: '100%',
+              padding: '10px 16px',
+              fontSize: '13px',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            <Download size={15} />
+            <span>Dodaj do Kalendarza (.ics)</span>
+          </button>
+
+          {/* Secondary Actions Row - Equal 50/50 Width */}
+          <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
             <button
               type="button"
               className="apple-btn apple-btn-secondary"
               onClick={handleCopy}
-              style={{ fontSize: '13px' }}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                fontSize: '13px',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+              }}
             >
               {copied ? <Check size={14} color="var(--apple-green)" /> : <Copy size={14} />}
               <span>{copied ? 'Skopiowano!' : 'Kopiuj'}</span>
@@ -299,23 +327,21 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
 
             <button
               type="button"
-              className="apple-btn apple-btn-primary"
-              onClick={() => downloadIcsFile([session], `${session.subject}_${session.startDate}.ics`)}
-              style={{ fontSize: '13px' }}
+              className="apple-btn apple-btn-secondary"
+              onClick={onClose}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                fontSize: '13px',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              <Download size={14} />
-              <span>Dodaj do Kalendarza (.ics)</span>
+              Zamknij
             </button>
           </div>
-
-          <button
-            type="button"
-            className="apple-btn apple-btn-secondary"
-            onClick={onClose}
-            style={{ fontSize: '13px' }}
-          >
-            Zamknij
-          </button>
         </div>
       </div>
     </div>

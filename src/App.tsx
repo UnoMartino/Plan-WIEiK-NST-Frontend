@@ -236,15 +236,15 @@ export const App: React.FC = () => {
           <div
             style={{
               maxWidth: '1400px',
-              margin: '10px auto 0 auto',
-              padding: '0 20px',
+              margin: '8px auto 0 auto',
+              padding: '0 16px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '6px',
               flexWrap: 'wrap',
             }}
           >
-            <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 500 }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 500, whiteSpace: 'nowrap' }}>
               Aktywne filtry:
             </span>
 

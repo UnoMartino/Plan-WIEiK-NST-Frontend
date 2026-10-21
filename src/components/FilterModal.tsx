@@ -265,10 +265,11 @@ export const FilterModal: React.FC<FilterModalProps> = ({
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: '20px',
+            overflowX: 'hidden',
+            padding: '16px 18px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
+            gap: '20px',
           }}
         >
           {/* 1. Global Text Search */}
@@ -430,8 +431,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(8, 1fr)',
-                gap: '6px',
+                gridTemplateColumns: 'repeat(8, minmax(0, 1fr))',
+                gap: '4px',
               }}
             >
               {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
@@ -445,9 +446,9 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     type="button"
                     onClick={() => handleToggleSemester(semNum)}
                     style={{
-                      padding: '8px 4px',
-                      borderRadius: 'var(--radius-sm)',
-                      fontSize: '13px',
+                      padding: '6px 2px',
+                      borderRadius: 'var(--radius-xs)',
+                      fontSize: '12px',
                       fontWeight: 700,
                       textAlign: 'center',
                       display: 'flex',
@@ -458,13 +459,14 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                       color: isSelected ? '#FFFFFF' : 'var(--text-primary)',
                       border: `1px solid ${isSelected ? 'transparent' : 'var(--border-subtle)'}`,
                       cursor: 'pointer',
+                      minWidth: 0,
                     }}
                     title={`Semestr ${semNum} (${isOdd ? 'zimowy' : 'letni'})`}
                   >
                     <span>{semNum}</span>
                     <span
                       style={{
-                        fontSize: '9px',
+                        fontSize: '8px',
                         fontWeight: 500,
                         opacity: 0.75,
                         textTransform: 'uppercase',
@@ -560,7 +562,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     }}
                     onClick={() => handleToggleFaculty(fCode)}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
                       <div
                         style={{
                           width: '18px',
@@ -572,16 +574,18 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#FFFFFF',
+                          flexShrink: 0,
                         }}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
                       </div>
-                      <div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
                         <span
                           style={{
                             fontSize: '13px',
                             fontWeight: isSelected ? 600 : 400,
                             color: isSelected ? 'var(--apple-blue)' : 'var(--text-primary)',
+                            wordBreak: 'break-word',
                           }}
                         >
                           {meta ? meta.name : fCode}
@@ -592,6 +596,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                             marginLeft: '6px',
                             color: 'var(--text-tertiary)',
                             fontFamily: 'var(--font-mono)',
+                            whiteSpace: 'nowrap',
                           }}
                         >
                           [{fCode}]
@@ -611,6 +616,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         padding: '2px 8px',
                         borderRadius: 'var(--radius-pill)',
                         backgroundColor: 'var(--bg-pill)',
+                        flexShrink: 0,
+                        marginLeft: '8px',
                       }}
                       title="Wybierz tylko ten jeden kierunek"
                     >
@@ -815,7 +822,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
               <button
                 type="button"
                 className={`segmented-control-item ${settings.roomMode === 'all' ? 'active' : ''}`}
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: 1, justifyContent: 'center', padding: '6px 4px', fontSize: '12px' }}
                 onClick={() => onUpdateSettings({ roomMode: 'all' })}
               >
                 Wszystkie
@@ -823,18 +830,20 @@ export const FilterModal: React.FC<FilterModalProps> = ({
               <button
                 type="button"
                 className={`segmented-control-item ${settings.roomMode === 'campus' ? 'active' : ''}`}
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: 1, justifyContent: 'center', padding: '6px 4px', fontSize: '12px' }}
                 onClick={() => onUpdateSettings({ roomMode: 'campus' })}
               >
-                🏛️ Kampus (Stacjonarne)
+                <span>🏛️ Kampus</span>
+                <span className="hide-on-mobile"> (Stacjonarne)</span>
               </button>
               <button
                 type="button"
                 className={`segmented-control-item ${settings.roomMode === 'remote' ? 'active' : ''}`}
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: 1, justifyContent: 'center', padding: '6px 4px', fontSize: '12px' }}
                 onClick={() => onUpdateSettings({ roomMode: 'remote' })}
               >
-                💻 MS Teams (Zdalne)
+                <span>💻 Zdalne</span>
+                <span className="hide-on-mobile"> (MS Teams)</span>
               </button>
             </div>
           </div>

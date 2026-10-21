@@ -134,23 +134,13 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
     <div
       style={{
         maxWidth: '1400px',
-        margin: '16px auto 0 auto',
-        padding: '0 20px',
+        margin: '12px auto 0 auto',
+        padding: '0 16px',
       }}
     >
-      <div
-        className="apple-card"
-        style={{
-          padding: '12px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
-        {/* Navigation Buttons: Wstecz, Dzisiaj, Dalej */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="apple-card nav-toolbar-card">
+        {/* Navigation Buttons: Wstecz, Dzisiaj, Dalej & Zjazd Dropdown */}
+        <div className="nav-toolbar-top-row">
           <div
             style={{
               display: 'inline-flex',
@@ -163,7 +153,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
               type="button"
               className="apple-btn"
               onClick={handlePrev}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
+              style={{ padding: '6px 10px', fontSize: '13px' }}
               title="Poprzedni"
             >
               <ChevronLeft size={16} />
@@ -189,7 +179,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
               type="button"
               className="apple-btn"
               onClick={handleNext}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
+              style={{ padding: '6px 10px', fontSize: '13px' }}
               title="Dalej"
             >
               <span className="hide-on-mobile">Dalej</span>
@@ -207,6 +197,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
                 padding: '6px 12px',
                 fontSize: '13px',
                 fontWeight: 500,
+                whiteSpace: 'nowrap',
               }}
               title="Wybierz zjazd weekendowy"
             >
@@ -224,21 +215,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
                   }}
                   onClick={() => setShowZjazdPicker(false)}
                 />
-                <div
-                  className="apple-card animate-scale-up"
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    marginTop: '6px',
-                    width: '280px',
-                    maxHeight: '340px',
-                    overflowY: 'auto',
-                    zIndex: 100,
-                    padding: '8px',
-                    boxShadow: 'var(--shadow-lg)',
-                  }}
-                >
+                <div className="apple-card animate-scale-up zjazd-picker-dropdown">
                   <div
                     style={{
                       fontSize: '12px',
@@ -288,15 +265,16 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
           </div>
         </div>
 
-        {/* Center/Right: Current Period Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        {/* Center/Right: Current Period Title & Summary */}
+        <div className="nav-toolbar-period-row">
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <CalendarDays size={18} color="var(--apple-blue)" />
+            <CalendarDays size={17} color="var(--apple-blue)" />
             <span
               style={{
-                fontSize: '15px',
+                fontSize: '14px',
                 fontWeight: 600,
                 color: 'var(--text-primary)',
+                whiteSpace: 'nowrap',
               }}
             >
               {periodLabel}
@@ -314,6 +292,8 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
               backgroundColor: 'var(--bg-pill)',
               padding: '3px 10px',
               borderRadius: 'var(--radius-pill)',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
           >
             <span>
@@ -332,6 +312,65 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
           </div>
         </div>
       </div>
+
+      <style>{`
+        .nav-toolbar-card {
+          padding: 12px 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .nav-toolbar-top-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .nav-toolbar-period-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .zjazd-picker-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 6px;
+          width: 280px;
+          max-height: 340px;
+          overflow-y: auto;
+          z-index: 100;
+          padding: 8px;
+          box-shadow: var(--shadow-lg);
+        }
+        @media (max-width: 680px) {
+          .nav-toolbar-card {
+            padding: 10px 12px !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+          }
+          .nav-toolbar-top-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+          }
+          .nav-toolbar-period-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+          }
+          .zjazd-picker-dropdown {
+            left: auto !important;
+            right: 0 !important;
+            max-width: calc(100vw - 32px) !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

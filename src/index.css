@@ -274,6 +274,8 @@ input, select, textarea {
   font-weight: 600;
   border-radius: var(--radius-pill);
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Custom Scrollbar for Apple feel */
@@ -321,4 +323,42 @@ input, select, textarea {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Responsive Mobile Rules (iPhone / Smartphones) */
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  /* Month Calendar Mobile Adaptations */
+  .month-calendar-cell {
+    min-height: 56px !important;
+    padding: 3px !important;
+  }
+
+  .month-day-number {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 11px !important;
+  }
+
+  .month-zjazd-tag {
+    font-size: 8px !important;
+    padding: 0 3px !important;
+  }
+
+  .month-session-count-text {
+    display: none !important;
+  }
+
+  /* Filter modal & Navigation toolbar */
+  .mobile-no-x-overflow {
+    overflow-x: hidden !important;
+  }
+
+  .mobile-wrap-col {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
 }

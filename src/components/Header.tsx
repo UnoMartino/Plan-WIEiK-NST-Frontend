@@ -94,108 +94,44 @@ export const Header: React.FC<HeaderProps> = ({
   }
 
   return (
-    <header
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-        backgroundColor: 'var(--bg-surface)',
-        backdropFilter: 'var(--blur-nav)',
-        WebkitBackdropFilter: 'var(--blur-nav)',
-        borderBottom: '1px solid var(--border-subtle)',
-        padding: '10px 16px',
-        transition: 'background-color 0.2s ease, border-color 0.2s ease',
-      }}
-    >
+    <header className="apple-header">
       <div className="header-container">
         {/* Top row: Brand & Action Icons */}
         <div className="header-top-row">
           {/* Brand & Subtitle */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'linear-gradient(135deg, var(--apple-blue), var(--apple-indigo))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                boxShadow: 'var(--shadow-sm)',
-                flexShrink: 0,
-              }}
-            >
-              <Calendar size={20} />
+          <div className="header-brand">
+            <div className="header-brand-icon">
+              <Calendar size={18} />
             </div>
 
-            <div>
+            <div className="header-brand-info">
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <h1
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: 700,
-                    letterSpacing: '-0.3px',
-                    color: 'var(--text-primary)',
-                    margin: 0,
-                  }}
-                >
+                <h1 className="header-brand-title">
                   Plan WIEiK PK
                 </h1>
-                <span
-                  style={{
-                    fontSize: '10px',
-                    fontWeight: 600,
-                    padding: '1px 6px',
-                    borderRadius: 'var(--radius-pill)',
-                    backgroundColor: 'rgba(0, 122, 255, 0.12)',
-                    color: 'var(--apple-blue)',
-                  }}
-                >
+                <span className="header-brand-badge">
                   2026/27
                 </span>
               </div>
-              <p
-                style={{
-                  fontSize: '11px',
-                  color: 'var(--text-secondary)',
-                  margin: 0,
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <p className="header-brand-subtitle">
                 Inżynieria Elektryczna i Komputerowa
               </p>
             </div>
           </div>
 
-          {/* Right Action Icons (in top row on mobile) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {/* Right Action Icons (Filtry, Pobierz, Info, Odśwież, Motyw) */}
+          <div className="header-actions">
             {/* Filter Button */}
             <button
               type="button"
-              className="apple-btn apple-btn-secondary"
+              className="apple-btn apple-btn-secondary header-filter-btn"
               onClick={onOpenFilter}
-              style={{
-                position: 'relative',
-                padding: '6px 12px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}
               title="Filtruj kierunki, grupy i sale"
             >
-              <Filter size={14} />
-              <span>Filtry</span>
+              <Filter size={15} />
+              <span className="header-filter-label">Filtry</span>
               {activeFilterCount > 0 && (
-                <span
-                  style={{
-                    backgroundColor: 'var(--apple-blue)',
-                    color: '#FFFFFF',
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    padding: '1px 5px',
-                    borderRadius: 'var(--radius-pill)',
-                  }}
-                >
+                <span className="header-filter-badge">
                   {activeFilterCount}
                 </span>
               )}
@@ -214,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Sync status info */}
             <button
               type="button"
-              className="apple-btn-icon hide-on-mobile"
+              className="apple-btn-icon"
               onClick={onOpenSyncInfo}
               title="Informacje o źródle danych i synchronizacji"
             >
@@ -277,6 +213,17 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <style>{`
+        .apple-header {
+          position: sticky;
+          top: 0;
+          z-index: 40;
+          background-color: var(--bg-surface);
+          backdrop-filter: var(--blur-nav);
+          -webkit-backdrop-filter: var(--blur-nav);
+          border-bottom: 1px solid var(--border-subtle);
+          padding: 10px 16px;
+          transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
         .header-container {
           max-width: 1400px;
           margin: 0 auto;
@@ -284,21 +231,94 @@ export const Header: React.FC<HeaderProps> = ({
           align-items: center;
           justify-content: space-between;
           gap: 16px;
+          width: 100%;
         }
         .header-top-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 16px;
+          gap: 12px;
+          width: 100%;
+          min-width: 0;
         }
+        .header-brand {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+          flex: 1 1 auto;
+          overflow: hidden;
+        }
+        .header-brand-icon {
+          width: 36px;
+          height: 36px;
+          border-radius: var(--radius-sm);
+          background: linear-gradient(135deg, var(--apple-blue), var(--apple-indigo));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          box-shadow: var(--shadow-sm);
+          flex-shrink: 0;
+        }
+        .header-brand-info {
+          min-width: 0;
+          overflow: hidden;
+        }
+        .header-brand-title {
+          font-size: 17px;
+          fontWeight: 700;
+          letter-spacing: -0.3px;
+          color: var(--text-primary);
+          margin: 0;
+          white-space: nowrap;
+        }
+        .header-brand-badge {
+          font-size: 10px;
+          font-weight: 600;
+          padding: 1px 6px;
+          border-radius: var(--radius-pill);
+          background-color: rgba(0, 122, 255, 0.12);
+          color: var(--apple-blue);
+          white-space: nowrap;
+        }
+        .header-brand-subtitle {
+          font-size: 11px;
+          color: var(--text-secondary);
+          margin: 0;
+          white-space: nowrap;
+        }
+
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+        .header-filter-btn {
+          position: relative;
+          padding: 6px 12px;
+          font-size: 13px;
+          font-weight: 500;
+          height: 34px;
+        }
+        .header-filter-badge {
+          background-color: var(--apple-blue);
+          color: #FFFFFF;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 1px 6px;
+          border-radius: var(--radius-pill);
+        }
+
         @media (max-width: 820px) {
+          .apple-header {
+            padding: 8px 12px;
+          }
           .header-container {
             flex-direction: column;
             align-items: stretch;
             gap: 10px;
-          }
-          .header-top-row {
-            width: 100%;
           }
           .header-segmented {
             width: 100% !important;
@@ -309,6 +329,66 @@ export const Header: React.FC<HeaderProps> = ({
             justify-content: center;
             padding: 7px 4px;
             font-size: 13px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .header-top-row {
+            gap: 8px;
+          }
+          .header-brand {
+            gap: 8px;
+          }
+          .header-brand-icon {
+            width: 32px;
+            height: 32px;
+          }
+          .header-brand-title {
+            font-size: 15px;
+          }
+          .header-brand-subtitle {
+            display: none !important;
+          }
+          .header-actions {
+            gap: 5px;
+          }
+          .header-filter-btn {
+            width: 34px !important;
+            height: 34px !important;
+            padding: 0 !important;
+            justify-content: center;
+            border-radius: var(--radius-pill) !important;
+          }
+          .header-filter-label {
+            display: none !important;
+          }
+          .header-filter-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-surface);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+          }
+        }
+
+        @media (max-width: 390px) {
+          .header-brand-badge {
+            display: none !important;
+          }
+          .header-actions {
+            gap: 4px;
+          }
+          .header-actions .apple-btn-icon,
+          .header-actions .header-filter-btn {
+            width: 32px !important;
+            height: 32px !important;
           }
         }
       `}</style>

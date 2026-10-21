@@ -105,14 +105,9 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="header-brand-info">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <h1 className="header-brand-title">
-                  Plan WIEiK PK
-                </h1>
-                <span className="header-brand-badge">
-                  2026/27
-                </span>
-              </div>
+              <h1 className="header-brand-title">
+                Plan WIEiK PK
+              </h1>
               <p className="header-brand-subtitle">
                 Inżynieria Elektryczna i Komputerowa
               </p>
@@ -222,6 +217,9 @@ export const Header: React.FC<HeaderProps> = ({
           -webkit-backdrop-filter: var(--blur-nav);
           border-bottom: 1px solid var(--border-subtle);
           padding: 10px 16px;
+          padding-top: max(10px, env(safe-area-inset-top, 10px));
+          padding-left: max(16px, env(safe-area-inset-left, 16px));
+          padding-right: max(16px, env(safe-area-inset-right, 16px));
           transition: background-color 0.2s ease, border-color 0.2s ease;
         }
         .header-container {
@@ -267,19 +265,10 @@ export const Header: React.FC<HeaderProps> = ({
         }
         .header-brand-title {
           font-size: 17px;
-          fontWeight: 700;
+          font-weight: 700;
           letter-spacing: -0.3px;
           color: var(--text-primary);
           margin: 0;
-          white-space: nowrap;
-        }
-        .header-brand-badge {
-          font-size: 10px;
-          font-weight: 600;
-          padding: 1px 6px;
-          border-radius: var(--radius-pill);
-          background-color: rgba(0, 122, 255, 0.12);
-          color: var(--apple-blue);
           white-space: nowrap;
         }
         .header-brand-subtitle {
@@ -314,6 +303,9 @@ export const Header: React.FC<HeaderProps> = ({
         @media (max-width: 820px) {
           .apple-header {
             padding: 8px 12px;
+            padding-top: max(8px, env(safe-area-inset-top, 8px));
+            padding-left: max(12px, env(safe-area-inset-left, 12px));
+            padding-right: max(12px, env(safe-area-inset-right, 12px));
           }
           .header-container {
             flex-direction: column;
@@ -379,9 +371,6 @@ export const Header: React.FC<HeaderProps> = ({
         }
 
         @media (max-width: 390px) {
-          .header-brand-badge {
-            display: none !important;
-          }
           .header-actions {
             gap: 4px;
           }

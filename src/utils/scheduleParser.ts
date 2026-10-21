@@ -180,6 +180,77 @@ export function getCategoryMeta(category: GroupCategory): {
   }
 }
 
+export interface SubjectColor {
+  color: string
+  bgLight: string
+  bgDark: string
+}
+
+const SUBJECT_PALETTE: SubjectColor[] = [
+  {
+    color: '#007AFF', // Blue
+    bgLight: 'rgba(0, 122, 255, 0.12)',
+    bgDark: 'rgba(10, 132, 255, 0.22)',
+  },
+  {
+    color: '#34C759', // Green
+    bgLight: 'rgba(52, 199, 89, 0.12)',
+    bgDark: 'rgba(48, 209, 88, 0.22)',
+  },
+  {
+    color: '#FF9500', // Orange
+    bgLight: 'rgba(255, 149, 0, 0.12)',
+    bgDark: 'rgba(255, 159, 10, 0.22)',
+  },
+  {
+    color: '#AF52DE', // Purple
+    bgLight: 'rgba(175, 82, 222, 0.12)',
+    bgDark: 'rgba(191, 90, 242, 0.22)',
+  },
+  {
+    color: '#5856D6', // Indigo
+    bgLight: 'rgba(88, 86, 214, 0.12)',
+    bgDark: 'rgba(94, 92, 230, 0.22)',
+  },
+  {
+    color: '#30B0C7', // Teal
+    bgLight: 'rgba(48, 176, 199, 0.12)',
+    bgDark: 'rgba(64, 200, 224, 0.22)',
+  },
+  {
+    color: '#FF2D55', // Pink
+    bgLight: 'rgba(255, 45, 85, 0.12)',
+    bgDark: 'rgba(255, 55, 95, 0.22)',
+  },
+  {
+    color: '#D97706', // Amber
+    bgLight: 'rgba(217, 119, 6, 0.14)',
+    bgDark: 'rgba(245, 158, 11, 0.22)',
+  },
+  {
+    color: '#FF3B30', // Red
+    bgLight: 'rgba(255, 59, 48, 0.12)',
+    bgDark: 'rgba(255, 69, 58, 0.22)',
+  },
+  {
+    color: '#00C7BE', // Cyan / Mint
+    bgLight: 'rgba(0, 199, 190, 0.12)',
+    bgDark: 'rgba(99, 230, 226, 0.22)',
+  },
+]
+
+export function getSubjectColor(subject: string): SubjectColor {
+  if (!subject) return SUBJECT_PALETTE[0]
+  const s = subject.trim().toLowerCase()
+  let hash = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    hash ^= s.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  const index = Math.abs(hash >>> 0) % SUBJECT_PALETTE.length
+  return SUBJECT_PALETTE[index]
+}
+
 export function isRemoteRoom(room: string): boolean {
   if (!room) return false
   const r = room.toLowerCase()

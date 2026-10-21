@@ -14,6 +14,7 @@ import type { Session } from '../types/schedule'
 import {
   formatRoomDisplay,
   getCategoryMeta,
+  getSubjectColor,
   getFacultyLabel,
 } from '../utils/scheduleParser'
 import { formatDayFull } from '../utils/dateUtils'
@@ -30,6 +31,7 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
   if (!session) return null
 
   const categoryMeta = getCategoryMeta(session.groupCategory)
+  const subjectColor = getSubjectColor(session.subject)
   const roomInfo = formatRoomDisplay(session.room)
 
   const handleCopy = () => {
@@ -92,8 +94,8 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ session,
               <span
                 className="apple-badge"
                 style={{
-                  backgroundColor: categoryMeta.bgLight,
-                  color: categoryMeta.color,
+                  backgroundColor: subjectColor.bgLight,
+                  color: subjectColor.color,
                 }}
               >
                 {categoryMeta.label} • Grupa {session.group}

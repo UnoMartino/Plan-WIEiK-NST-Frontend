@@ -49,11 +49,25 @@ export const App: React.FC = () => {
     const root = document.documentElement
 
     const applyTheme = () => {
+      let isDark = false
       if (settings.theme === 'auto') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         root.setAttribute('data-theme', isDark ? 'dark' : 'light')
       } else {
+        isDark = settings.theme === 'dark'
         root.setAttribute('data-theme', settings.theme)
+      }
+
+      // Update theme-color meta tag so iOS Safari and Chrome tint the status bar / Dynamic Island area
+      const headerColor = isDark ? '#1C1C1E' : '#FFFFFF'
+      const metaTags = document.querySelectorAll('meta[name="theme-color"]')
+      if (metaTags.length > 0) {
+        metaTags.forEach((tag) => tag.setAttribute('content', headerColor))
+      } else {
+        const meta = document.createElement('meta')
+        meta.name = 'theme-color'
+        meta.content = headerColor
+        document.head.appendChild(meta)
       }
     }
 

@@ -15,6 +15,7 @@ import {
 import {
   formatRoomDisplay,
   getCategoryMeta,
+  getSubjectColor,
 } from '../utils/scheduleParser'
 
 interface MonthViewProps {
@@ -224,10 +225,10 @@ export const MonthView: React.FC<MonthViewProps> = ({
                       <span className="month-session-count-text"> {daySessions.length === 1 ? 'zajęcia' : 'zajęć'}</span>
                     </div>
 
-                    {/* Colored dots per class type */}
+                    {/* Colored dots per subject */}
                     <div style={{ display: 'flex', gap: '2px', flexWrap: 'wrap' }}>
                       {daySessions.slice(0, 4).map((s) => {
-                        const meta = getCategoryMeta(s.groupCategory)
+                        const sColor = getSubjectColor(s.subject)
                         return (
                           <span
                             key={s.id}
@@ -235,7 +236,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                               width: '5px',
                               height: '5px',
                               borderRadius: '50%',
-                              backgroundColor: meta.color,
+                              backgroundColor: sColor.color,
                               flexShrink: 0,
                             }}
                           />
@@ -316,6 +317,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
           >
             {activeDaySessions.map((s) => {
               const meta = getCategoryMeta(s.groupCategory)
+              const subjectColor = getSubjectColor(s.subject)
               const room = formatRoomDisplay(s.room)
 
               return (
@@ -327,7 +329,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                     padding: '12px 14px',
                     cursor: 'pointer',
                     borderRadius: 'var(--radius-sm)',
-                    borderLeft: `3px solid ${meta.color}`,
+                    borderLeft: `3px solid ${subjectColor.color}`,
                     backgroundColor: 'var(--bg-card-secondary)',
                   }}
                 >
@@ -353,8 +355,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
                     <span
                       className="apple-badge"
                       style={{
-                        backgroundColor: meta.bgLight,
-                        color: meta.color,
+                        backgroundColor: subjectColor.bgLight,
+                        color: subjectColor.color,
                         fontSize: '10px',
                       }}
                     >

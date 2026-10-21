@@ -9,6 +9,7 @@ import type { Session, WeekendZjazd } from '../types/schedule'
 import {
   formatRoomDisplay,
   getCategoryMeta,
+  getSubjectColor,
   getFacultyShortLabel,
 } from '../utils/scheduleParser'
 import { formatDayShortWithWeekday, isSameDay, getTodayString, addDays } from '../utils/dateUtils'
@@ -241,6 +242,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 ) : (
                   day.sessions.map((session, sIdx) => {
                     const category = getCategoryMeta(session.groupCategory)
+                    const subjectColor = getSubjectColor(session.subject)
                     const room = formatRoomDisplay(session.room)
 
                     // Check gap between classes
@@ -289,7 +291,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                             padding: '12px 14px',
                             cursor: 'pointer',
                             borderRadius: 'var(--radius-md)',
-                            borderLeft: `4px solid ${category.color}`,
+                            borderLeft: `4px solid ${subjectColor.color}`,
                             position: 'relative',
                           }}
                         >
@@ -317,13 +319,13 @@ export const WeekView: React.FC<WeekViewProps> = ({
                             <span
                               className="apple-badge"
                               style={{
-                                backgroundColor: category.bgLight,
-                                color: category.color,
+                                backgroundColor: subjectColor.bgLight,
+                                color: subjectColor.color,
                                 fontSize: '10px',
                                 padding: '2px 6px',
                               }}
                             >
-                              {session.group}
+                              {category.label} ({session.group})
                             </span>
                           </div>
 

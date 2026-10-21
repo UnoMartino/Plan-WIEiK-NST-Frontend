@@ -13,6 +13,7 @@ import type { Session, WeekendZjazd } from '../types/schedule'
 import {
   formatRoomDisplay,
   getCategoryMeta,
+  getSubjectColor,
   getFacultyShortLabel,
 } from '../utils/scheduleParser'
 import { formatDayFull } from '../utils/dateUtils'
@@ -179,6 +180,7 @@ export const DayView: React.FC<DayViewProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {sortedSessions.map((session, idx) => {
             const category = getCategoryMeta(session.groupCategory)
+            const subjectColor = getSubjectColor(session.subject)
             const room = formatRoomDisplay(session.room)
             const collision = hasCollision(idx)
 
@@ -230,7 +232,7 @@ export const DayView: React.FC<DayViewProps> = ({
                     padding: '16px 20px',
                     cursor: 'pointer',
                     position: 'relative',
-                    borderLeft: `4px solid ${category.color}`,
+                    borderLeft: `4px solid ${subjectColor.color}`,
                   }}
                 >
                   <div
@@ -274,8 +276,8 @@ export const DayView: React.FC<DayViewProps> = ({
                       <span
                         className="apple-badge"
                         style={{
-                          backgroundColor: category.bgLight,
-                          color: category.color,
+                          backgroundColor: subjectColor.bgLight,
+                          color: subjectColor.color,
                         }}
                       >
                         {category.label} • Grupa {session.group}

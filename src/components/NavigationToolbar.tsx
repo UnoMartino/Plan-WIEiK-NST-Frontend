@@ -117,7 +117,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
     periodLabel = formatDayFull(settings.selectedDate)
   } else if (settings.viewMode === 'week') {
     if (currentWeekend) {
-      periodLabel = `Zjazd ${currentWeekend.number} • ${formatWeekendLabel(
+      periodLabel = `Tydzień ${currentWeekend.number} • ${formatWeekendLabel(
         currentWeekend.fridayDate,
         currentWeekend.sundayDate
       )}`
@@ -199,10 +199,10 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
                 fontWeight: 500,
                 whiteSpace: 'nowrap',
               }}
-              title="Wybierz zjazd weekendowy"
+              title="Wybierz tydzień"
             >
               <Bookmark size={14} color="var(--apple-purple)" />
-              <span>{currentWeekend ? `Zjazd ${currentWeekend.number}` : 'Wybierz zjazd'}</span>
+              <span>{currentWeekend ? `Tydzień ${currentWeekend.number}` : 'Wybierz tydzień'}</span>
             </button>
 
             {showZjazdPicker && (
@@ -225,7 +225,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
                       borderBottom: '1px solid var(--border-subtle)',
                     }}
                   >
-                    Harmonogram zjazdów (Semestr Zimowy)
+                    Harmonogram tygodni (Semestr Zimowy)
                   </div>
                   {zjazdy.map((z) => {
                     const isSelected = currentWeekend?.number === z.number
@@ -250,7 +250,7 @@ export const NavigationToolbar: React.FC<NavigationToolbarProps> = ({
                         }}
                       >
                         <div>
-                          <div>Zjazd {z.number}</div>
+                          <div>Tydzień {z.number}</div>
                           <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                             {formatWeekendLabel(z.fridayDate, z.sundayDate)}
                           </div>

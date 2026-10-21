@@ -15,7 +15,6 @@ import {
   FACULTY_METADATA,
   getCategoryMeta,
   resolveFacultyMeta,
-  extractSemesterFromCode,
 } from '../utils/scheduleParser'
 
 interface FilterModalProps {
@@ -50,12 +49,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         settings.selectedFaculties.length === 0 ||
         s.faculties.some((f) => settings.selectedFaculties.includes(f))
 
-      const matchSemester =
-        !settings.selectedSemesters ||
-        settings.selectedSemesters.length === 0 ||
-        (s.semester !== undefined && settings.selectedSemesters.includes(s.semester))
-
-      if (matchFaculty && matchSemester) {
+      if (matchFaculty) {
         if (s.groups && s.groups.length > 0) {
           s.groups.forEach((g) => {
             const clean = g.trim()
@@ -74,7 +68,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
       if (b === 'W') return 1
       return a.localeCompare(b, undefined, { numeric: true })
     })
-  }, [allSessions, settings.selectedFaculties, settings.selectedSemesters])
+  }, [allSessions, settings.selectedFaculties])
 
   if (!isOpen) return null
 
@@ -94,27 +88,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     onUpdateSettings({ selectedFaculties: [code], selectedGroups: [] })
   }
 
-  // Semester toggling (1-8)
-  const handleToggleSemester = (sem: number) => {
-    const current = settings.selectedSemesters || []
-    let next: number[]
-    if (current.includes(sem)) {
-      next = current.filter((s) => s !== sem)
-    } else {
-      next = [...current, sem]
-    }
-    onUpdateSettings({ selectedSemesters: next })
-  }
 
-  const handleSelectSemesterPreset = (type: 'all' | 'odd' | 'even') => {
-    if (type === 'all') {
-      onUpdateSettings({ selectedSemesters: [] })
-    } else if (type === 'odd') {
-      onUpdateSettings({ selectedSemesters: [1, 3, 5, 7] })
-    } else if (type === 'even') {
-      onUpdateSettings({ selectedSemesters: [2, 4, 6, 8] })
-    }
-  }
 
   const handleToggleGroup = (group: string) => {
     const isSelected = settings.selectedGroups.includes(group)
@@ -149,20 +123,13 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     })
   }
 
-  // Filtered faculties by search text and selected semesters
+  // Filtered faculties by search text
   const filteredFacultiesList = availableFaculties.filter((fCode) => {
     const meta = resolveFacultyMeta(fCode)
     const label = meta.name.toLowerCase()
     const matchesSearch =
       label.includes(facultySearch.toLowerCase()) || fCode.toLowerCase().includes(facultySearch.toLowerCase())
-    if (!matchesSearch) return false
-
-    if (settings.selectedSemesters && settings.selectedSemesters.length > 0) {
-      const sem = extractSemesterFromCode(fCode)
-      if (sem && !settings.selectedSemesters.includes(sem)) return false
-    }
-
-    return true
+    return matchesSearch
   })
 
   const allTypes: GroupCategory[] = [
@@ -231,9 +198,6 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             </div>
             <div>
               <h2 style={{ fontSize: '17px', fontWeight: 700, margin: 0 }}>Filtry planu zajęć</h2>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
-                Zapisywane automatycznie w pamięci podręcznej
-              </p>
             </div>
           </div>
 
@@ -328,157 +292,6 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             </div>
           </div>
 
-          {/* 2. Semestr studiów (Wsparcie dla semestrów 1 do 8) */}
-          <div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '8px',
-              }}
-            >
-              <label
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <Layers size={16} color="var(--apple-indigo)" />
-                <span>
-                  Semestr studiów ({settings.selectedSemesters && settings.selectedSemesters.length > 0
-                    ? `Semestry: ${settings.selectedSemesters.sort().join(', ')}`
-                    : 'Wszystkie semestry 1–8'})
-                </span>
-              </label>
-
-              {settings.selectedSemesters && settings.selectedSemesters.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => onUpdateSettings({ selectedSemesters: [] })}
-                  style={{ fontSize: '12px', color: 'var(--apple-blue)', fontWeight: 500 }}
-                >
-                  Wszystkie semestry
-                </button>
-              )}
-            </div>
-
-            {/* Quick Presets for Semesters */}
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '6px',
-                marginBottom: '10px',
-              }}
-            >
-              <button
-                type="button"
-                className="apple-btn"
-                onClick={() => handleSelectSemesterPreset('all')}
-                style={{
-                  padding: '4px 10px',
-                  fontSize: '11px',
-                  backgroundColor:
-                    !settings.selectedSemesters || settings.selectedSemesters.length === 0
-                      ? 'var(--apple-indigo)'
-                      : 'var(--bg-pill)',
-                  color:
-                    !settings.selectedSemesters || settings.selectedSemesters.length === 0
-                      ? '#FFFFFF'
-                      : 'var(--text-primary)',
-                }}
-              >
-                Wszystkie semestry
-              </button>
-
-              <button
-                type="button"
-                className="apple-btn"
-                onClick={() => handleSelectSemesterPreset('odd')}
-                style={{
-                  padding: '4px 10px',
-                  fontSize: '11px',
-                  backgroundColor: 'var(--bg-pill)',
-                  color: 'var(--text-primary)',
-                }}
-                title="Semestry nieparzyste (zimowe: 1, 3, 5, 7)"
-              >
-                ❄️ Zimowe (1, 3, 5, 7)
-              </button>
-
-              <button
-                type="button"
-                className="apple-btn"
-                onClick={() => handleSelectSemesterPreset('even')}
-                style={{
-                  padding: '4px 10px',
-                  fontSize: '11px',
-                  backgroundColor: 'var(--bg-pill)',
-                  color: 'var(--text-primary)',
-                }}
-                title="Semestry parzyste (letnie: 2, 4, 6, 8)"
-              >
-                ☀️ Letnie (2, 4, 6, 8)
-              </button>
-            </div>
-
-            {/* Semester Number Buttons 1 to 8 */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(8, minmax(0, 1fr))',
-                gap: '4px',
-              }}
-            >
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
-                const isSelected =
-                  settings.selectedSemesters && settings.selectedSemesters.includes(semNum)
-                const isOdd = semNum % 2 !== 0
-
-                return (
-                  <button
-                    key={semNum}
-                    type="button"
-                    onClick={() => handleToggleSemester(semNum)}
-                    style={{
-                      padding: '6px 2px',
-                      borderRadius: 'var(--radius-xs)',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      textAlign: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: isSelected ? 'var(--apple-indigo)' : 'var(--bg-pill)',
-                      color: isSelected ? '#FFFFFF' : 'var(--text-primary)',
-                      border: `1px solid ${isSelected ? 'transparent' : 'var(--border-subtle)'}`,
-                      cursor: 'pointer',
-                      minWidth: 0,
-                    }}
-                    title={`Semestr ${semNum} (${isOdd ? 'zimowy' : 'letni'})`}
-                  >
-                    <span>{semNum}</span>
-                    <span
-                      style={{
-                        fontSize: '8px',
-                        fontWeight: 500,
-                        opacity: 0.75,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {isOdd ? 'zim.' : 'let.'}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
 
           {/* 3. Kierunek studiów (Faculty) */}
           <div>
@@ -739,7 +552,6 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                       gap: '4px',
                     }}
                   >
-                    {isSelected && <Check size={12} strokeWidth={3} />}
                     <span>{grp}</span>
                     {isLecture && <span style={{ opacity: 0.8, fontSize: '10px' }}>(Wykład)</span>}
                   </button>
@@ -856,13 +668,9 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
           }}
         >
-          <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-            Zmiany zapisane w pamięci
-          </div>
-
           <button
             type="button"
             className="apple-btn apple-btn-primary"

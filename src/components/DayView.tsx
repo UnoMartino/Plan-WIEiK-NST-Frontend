@@ -170,7 +170,7 @@ export const DayView: React.FC<DayViewProps> = ({
               style={{ marginTop: '8px' }}
             >
               <Calendar size={15} />
-              <span>Przejdź do najbliższego zjazdu ({nearestZjazd.label})</span>
+              <span>Przejdź do najbliższego tygodnia ({nearestZjazd.label})</span>
               <ChevronRight size={15} />
             </button>
           )}

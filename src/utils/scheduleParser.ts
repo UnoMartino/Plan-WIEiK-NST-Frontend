@@ -469,7 +469,7 @@ export function buildWeekendZjazdy(sessions: Session[]): WeekendZjazd[] {
 
     return {
       number: index + 1,
-      label: `Zjazd ${index + 1} (${labelDates})`,
+      label: `Tydzień ${index + 1} (${labelDates})`,
       dates: clusterDates,
       fridayDate,
       saturdayDate,

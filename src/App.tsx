@@ -3,7 +3,6 @@ import type { FilterSettings, RawScheduleItem, Session } from './types/schedule'
 import {
   buildWeekendZjazdy,
   parseScheduleData,
-  getFacultyShortLabel,
   getNearestWeekend,
 } from './utils/scheduleParser'
 import { loadStoredSettings, saveStoredSettings } from './utils/storage'
@@ -16,7 +15,7 @@ import { MonthView } from './components/MonthView'
 import { FilterModal } from './components/FilterModal'
 import { SessionDetailModal } from './components/SessionDetailModal'
 import { SyncInfoModal } from './components/SyncInfoModal'
-import { X, AlertTriangle, RefreshCw } from 'lucide-react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 export const App: React.FC = () => {
   // Load persistent settings from LocalStorage
@@ -130,13 +129,6 @@ export const App: React.FC = () => {
         if (!matchesFaculty) return false
       }
 
-      // 1b. Semester filter (1 to 8)
-      if (settings.selectedSemesters && settings.selectedSemesters.length > 0) {
-        if (!s.semester || !settings.selectedSemesters.includes(s.semester)) {
-          return false
-        }
-      }
-
       // 2. Group filter
       if (settings.selectedGroups.length > 0) {
         const sessionGroups =
@@ -190,7 +182,6 @@ export const App: React.FC = () => {
   const activeFilterCount = useMemo(() => {
     let count = 0
     if (settings.selectedFaculties.length > 0) count++
-    if (settings.selectedSemesters && settings.selectedSemesters.length > 0) count++
     if (settings.selectedGroups.length > 0) count++
     if (settings.selectedTypes.length < 7) count++
     if (settings.roomMode !== 'all') count++
@@ -245,150 +236,7 @@ export const App: React.FC = () => {
           periodSessions={periodSessions}
         />
 
-        {/* Active Filters Pill Bar (Quick Dismiss Chips) */}
-        {activeFilterCount > 0 && (
-          <div
-            style={{
-              maxWidth: '1400px',
-              margin: '8px auto 0 auto',
-              padding: '0 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              flexWrap: 'wrap',
-            }}
-          >
-            <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 500, whiteSpace: 'nowrap' }}>
-              Aktywne filtry:
-            </span>
 
-            {/* Faculty Pills */}
-            {settings.selectedFaculties.map((fCode) => (
-              <span
-                key={fCode}
-                className="apple-badge"
-                style={{
-                  backgroundColor: 'rgba(0, 122, 255, 0.12)',
-                  color: 'var(--apple-blue)',
-                  padding: '3px 8px',
-                  cursor: 'pointer',
-                }}
-                onClick={() =>
-                  handleUpdateSettings({
-                    selectedFaculties: settings.selectedFaculties.filter((f) => f !== fCode),
-                  })
-                }
-                title="Usuń ten filtr"
-              >
-                <span>{getFacultyShortLabel(fCode)}</span>
-                <X size={12} />
-              </span>
-            ))}
-
-            {/* Semester Pills (1-8) */}
-            {settings.selectedSemesters &&
-              settings.selectedSemesters.map((sem) => (
-                <span
-                  key={`sem_${sem}`}
-                  className="apple-badge"
-                  style={{
-                    backgroundColor: 'rgba(88, 86, 214, 0.12)',
-                    color: 'var(--apple-indigo)',
-                    padding: '3px 8px',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() =>
-                    handleUpdateSettings({
-                      selectedSemesters: settings.selectedSemesters.filter((s) => s !== sem),
-                    })
-                  }
-                  title="Usuń ten filtr semestru"
-                >
-                  <span>Semestr {sem}</span>
-                  <X size={12} />
-                </span>
-              ))}
-
-            {/* Group Pills */}
-            {settings.selectedGroups.map((grp) => (
-              <span
-                key={grp}
-                className="apple-badge"
-                style={{
-                  backgroundColor: 'rgba(52, 199, 89, 0.12)',
-                  color: 'var(--apple-green)',
-                  padding: '3px 8px',
-                  cursor: 'pointer',
-                }}
-                onClick={() =>
-                  handleUpdateSettings({
-                    selectedGroups: settings.selectedGroups.filter((g) => g !== grp),
-                  })
-                }
-                title="Usuń ten filtr grupy"
-              >
-                <span>Grupa: {grp}</span>
-                <X size={12} />
-              </span>
-            ))}
-
-            {/* Room Mode Pill */}
-            {settings.roomMode !== 'all' && (
-              <span
-                className="apple-badge"
-                style={{
-                  backgroundColor: 'rgba(255, 149, 0, 0.12)',
-                  color: 'var(--apple-orange)',
-                  padding: '3px 8px',
-                  cursor: 'pointer',
-                }}
-                onClick={() => handleUpdateSettings({ roomMode: 'all' })}
-              >
-                <span>{settings.roomMode === 'campus' ? 'Tylko Kampus PK' : 'Tylko MS Teams'}</span>
-                <X size={12} />
-              </span>
-            )}
-
-            {/* Search query pill */}
-            {settings.searchQuery && (
-              <span
-                className="apple-badge"
-                style={{
-                  backgroundColor: 'var(--bg-pill)',
-                  color: 'var(--text-primary)',
-                  padding: '3px 8px',
-                  cursor: 'pointer',
-                }}
-                onClick={() => handleUpdateSettings({ searchQuery: '' })}
-              >
-                <span>Szukaj: "{settings.searchQuery}"</span>
-                <X size={12} />
-              </span>
-            )}
-
-            <button
-              type="button"
-              onClick={() =>
-                handleUpdateSettings({
-                  selectedFaculties: [],
-                  selectedSemesters: [],
-                  selectedGroups: [],
-                  selectedTypes: ['lecture', 'lab', 'project', 'exercise', 'seminar', 'language', 'other'],
-                  roomMode: 'all',
-                  searchQuery: '',
-                })
-              }
-              style={{
-                fontSize: '11px',
-                color: 'var(--apple-red)',
-                padding: '2px 6px',
-                fontWeight: 500,
-              }}
-            >
-              Wyczyść wszystkie
-            </button>
-          </div>
-        )}
 
         {/* Loading Spinner */}
         {isLoading ? (

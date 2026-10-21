@@ -204,7 +204,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                       }}
                       title={zjazd.label}
                     >
-                      Z{zjazd.number}
+                      T{zjazd.number}
                     </span>
                   )}
                 </div>

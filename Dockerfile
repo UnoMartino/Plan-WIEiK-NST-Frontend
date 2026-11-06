@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+RUN node scripts/fetch-plan.js public/schedule_data.json || echo "Ostrzeżenie: Nie udało się pobrać planu podczas budowania, użyto lokalnego pliku."
 RUN npm run build
 
 # Etap 2: Lekki serwer Nginx

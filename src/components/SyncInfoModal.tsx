@@ -41,6 +41,14 @@ export const SyncInfoModal: React.FC<SyncInfoModalProps> = ({
       })
     : 'Nieznana'
 
+  const sourceLabels: Record<string, string> = {
+    'live-proxy': 'Serwer uczelni (na żywo)',
+    'cors-proxy': 'Serwer uczelni (przez proxy CORS)',
+    cache: 'Pamięć podręczna (LocalStorage)',
+    bundled: 'Wbudowana kopia zapasowa',
+  }
+  const sourceLabel = sourceLabels[cacheInfo.source] || cacheInfo.source
+
   return (
     <div
       style={{
@@ -239,7 +247,7 @@ export const SyncInfoModal: React.FC<SyncInfoModalProps> = ({
             <HardDrive size={22} color="var(--apple-orange)" />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                Pamięć podręczna przeglądarki (LocalStorage)
+                Źródło aktywnych danych: {sourceLabel}
               </div>
               <div
                 style={{

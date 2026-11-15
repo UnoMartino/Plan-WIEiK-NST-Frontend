@@ -1,0 +1,18 @@
+name: Local Docker Compose Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pobranie najnowszego kodu
+        uses: actions/checkout@v4
+
+      - name: Przebudowanie i uruchomienie przez Docker Compose
+        run: |
+          docker compose up -d --build --remove-orphans
+          docker image prune -f

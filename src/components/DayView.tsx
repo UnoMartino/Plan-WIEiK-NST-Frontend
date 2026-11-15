@@ -8,8 +8,9 @@ import {
   ChevronRight,
   AlertCircle,
   Video,
+  StickyNote,
 } from 'lucide-react'
-import type { Session, WeekendZjazd } from '../types/schedule'
+import type { ScheduleNotes, Session, WeekendZjazd } from '../types/schedule'
 import {
   formatRoomDisplay,
   getCategoryMeta,
@@ -17,6 +18,7 @@ import {
   getFacultyShortLabel,
 } from '../utils/scheduleParser'
 import { formatDayFull } from '../utils/dateUtils'
+import { getNotesForSession } from '../utils/storage'
 
 interface DayViewProps {
   selectedDate: string
@@ -24,6 +26,7 @@ interface DayViewProps {
   onSelectSession: (session: Session) => void
   onJumpToNearestZjazd: () => void
   nearestZjazd?: WeekendZjazd
+  notes: ScheduleNotes
 }
 
 export const DayView: React.FC<DayViewProps> = ({
@@ -32,6 +35,7 @@ export const DayView: React.FC<DayViewProps> = ({
   onSelectSession,
   onJumpToNearestZjazd,
   nearestZjazd,
+  notes,
 }) => {
   // Sort sessions by start time
   const sortedSessions = [...sessions].sort((a, b) => a.startTimestamp - b.startTimestamp)
@@ -183,6 +187,7 @@ export const DayView: React.FC<DayViewProps> = ({
             const subjectColor = getSubjectColor(session.subject)
             const room = formatRoomDisplay(session.room)
             const collision = hasCollision(idx)
+            const { sessionNote, subjectNote } = getNotesForSession(session, notes)
 
             // Calculate break time since previous class if any
             let breakMinutes = 0
@@ -331,6 +336,90 @@ export const DayView: React.FC<DayViewProps> = ({
                       {session.subject}
                     </h3>
                   </div>
+
+                  {/* Attached Notes Preview */}
+                  {(sessionNote || subjectNote) && (
+                    <div
+                      style={{
+                        marginTop: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
+                      {sessionNote && (
+                        <div
+                          style={{
+                            padding: '7px 10px',
+                            borderRadius: 'var(--radius-xs)',
+                            backgroundColor: 'rgba(255, 149, 0, 0.1)',
+                            borderLeft: '3px solid var(--apple-orange)',
+                            fontSize: '12px',
+                            color: 'var(--text-primary)',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                          }}
+                        >
+                          <StickyNote
+                            size={13}
+                            color="var(--apple-orange)"
+                            style={{ flexShrink: 0, marginTop: '2px' }}
+                          />
+                          <div style={{ minWidth: 0 }}>
+                            <span
+                              style={{
+                                fontWeight: 600,
+                                color: 'var(--apple-orange)',
+                                marginRight: '6px',
+                              }}
+                            >
+                              Notatka (ten termin):
+                            </span>
+                            <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                              {sessionNote.text}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {subjectNote && (
+                        <div
+                          style={{
+                            padding: '7px 10px',
+                            borderRadius: 'var(--radius-xs)',
+                            backgroundColor: 'rgba(0, 122, 255, 0.08)',
+                            borderLeft: '3px solid var(--apple-blue)',
+                            fontSize: '12px',
+                            color: 'var(--text-primary)',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                          }}
+                        >
+                          <StickyNote
+                            size={13}
+                            color="var(--apple-blue)"
+                            style={{ flexShrink: 0, marginTop: '2px' }}
+                          />
+                          <div style={{ minWidth: 0 }}>
+                            <span
+                              style={{
+                                fontWeight: 600,
+                                color: 'var(--apple-blue)',
+                                marginRight: '6px',
+                              }}
+                            >
+                              Notatka (przedmiot):
+                            </span>
+                            <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                              {subjectNote.text}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Instructor & Faculty Footer */}
                   <div

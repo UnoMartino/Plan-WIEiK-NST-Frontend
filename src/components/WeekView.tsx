@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Clock,
   MapPin,
   Coffee,
   Video,
+  StickyNote,
 } from 'lucide-react'
-import type { Session, WeekendZjazd } from '../types/schedule'
+import type { ScheduleNotes, Session, WeekendZjazd } from '../types/schedule'
 import {
   formatRoomDisplay,
   getCategoryMeta,
@@ -13,6 +14,7 @@ import {
   getFacultyShortLabel,
 } from '../utils/scheduleParser'
 import { formatDayShortWithWeekday, isSameDay, getTodayString, addDays } from '../utils/dateUtils'
+import { getNotesForSession } from '../utils/storage'
 
 interface WeekViewProps {
   weekend: WeekendZjazd | undefined
@@ -20,6 +22,7 @@ interface WeekViewProps {
   onSelectSession: (session: Session) => void
   selectedDate: string
   onSelectDate: (dateStr: string) => void
+  notes: ScheduleNotes
 }
 
 export const WeekView: React.FC<WeekViewProps> = ({
@@ -28,6 +31,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   onSelectSession,
   selectedDate,
   onSelectDate,
+  notes,
 }) => {
   const todayStr = getTodayString()
 
@@ -49,17 +53,14 @@ export const WeekView: React.FC<WeekViewProps> = ({
   ]
 
   // Mobile selected day tab (defaults to Saturday or the day currently selected)
-  const [mobileActiveDay, setMobileActiveDay] = useState<string>(() => {
+  const [selectedMobileDay, setMobileActiveDay] = useState<string>(() => {
     if (days.some((d) => d.dateStr === selectedDate)) return selectedDate
     return saturdayDate
   })
 
-  // Synchronize mobileActiveDay when weekend dates change
-  useEffect(() => {
-    if (!days.some((d) => d.dateStr === mobileActiveDay)) {
-      setMobileActiveDay(saturdayDate)
-    }
-  }, [saturdayDate, fridayDate, sundayDate])
+  const mobileActiveDay = days.some((d) => d.dateStr === selectedMobileDay)
+    ? selectedMobileDay
+    : saturdayDate
 
   // Group sessions by date
   const sessionsByDay = days.map((day) => {
@@ -244,6 +245,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
                     const category = getCategoryMeta(session.groupCategory)
                     const subjectColor = getSubjectColor(session.subject)
                     const room = formatRoomDisplay(session.room)
+                    const { sessionNote, subjectNote } = getNotesForSession(session, notes)
+                    const activeNote = sessionNote || subjectNote
 
                     // Check gap between classes
                     let gapMins = 0
@@ -359,6 +362,47 @@ export const WeekView: React.FC<WeekViewProps> = ({
                               <span>{room.displayName}</span>
                             </span>
                           </div>
+
+                          {/* Note Preview */}
+                          {activeNote && (
+                            <div
+                              style={{
+                                marginTop: '6px',
+                                padding: '5px 8px',
+                                borderRadius: 'var(--radius-xs)',
+                                backgroundColor: sessionNote
+                                  ? 'rgba(255, 149, 0, 0.1)'
+                                  : 'rgba(0, 122, 255, 0.08)',
+                                borderLeft: `2.5px solid ${
+                                  sessionNote ? 'var(--apple-orange)' : 'var(--apple-blue)'
+                                }`,
+                                fontSize: '11px',
+                                color: 'var(--text-primary)',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: '5px',
+                              }}
+                            >
+                              <StickyNote
+                                size={11}
+                                color={sessionNote ? 'var(--apple-orange)' : 'var(--apple-blue)'}
+                                style={{ flexShrink: 0, marginTop: '2px' }}
+                              />
+                              <span
+                                style={{
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical',
+                                  lineHeight: 1.35,
+                                  wordBreak: 'break-word',
+                                }}
+                              >
+                                {activeNote.text}
+                              </span>
+                            </div>
+                          )}
 
                           {/* Instructor & Faculty */}
                           <div

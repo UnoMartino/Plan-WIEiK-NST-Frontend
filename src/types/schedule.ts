@@ -80,3 +80,15 @@ export interface FacultyMeta {
   semester?: number
   specialization?: string
 }
+
+export type NoteScope = 'session' | 'subject'
+
+export interface NoteItem {
+  text: string
+  updatedAt: number
+}
+
+export interface ScheduleNotes {
+  bySession: Record<string, NoteItem>
+  bySubject: Record<string, NoteItem>
+}

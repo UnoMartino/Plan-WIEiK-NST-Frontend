@@ -8,7 +8,7 @@ import {
   Download,
   Info,
 } from 'lucide-react'
-import type { FilterSettings, Session } from '../types/schedule'
+import type { FilterSettings, ScheduleNotes, Session } from '../types/schedule'
 import { downloadIcsFile } from '../utils/icsExport'
 
 const AutoSunIcon: React.FC<{ size?: number }> = ({ size = 17 }) => (
@@ -56,6 +56,7 @@ interface HeaderProps {
   isRefreshing: boolean
   activeFilterCount: number
   filteredSessions: Session[]
+  notes: ScheduleNotes
   cacheInfo: {
     source: string
     timestamp: number
@@ -71,6 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
   isRefreshing,
   activeFilterCount,
   filteredSessions,
+  notes,
 }) => {
   const toggleTheme = () => {
     const nextTheme: Record<string, FilterSettings['theme']> = {
@@ -136,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               className="apple-btn-icon"
-              onClick={() => downloadIcsFile(filteredSessions, 'plan_zajec_pk.ics')}
+              onClick={() => downloadIcsFile(filteredSessions, 'plan_zajec_pk.ics', notes)}
               title="Eksportuj przefiltrowany plan do Apple/Google Calendar (.ics)"
             >
               <Download size={15} />

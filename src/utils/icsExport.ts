@@ -1,4 +1,5 @@
-import type { Session } from '../types/schedule'
+import type { ScheduleNotes, Session } from '../types/schedule'
+import { getNotesForSession } from './storage'
 
 function formatIcsDate(timestamp: number): string {
   const d = new Date(timestamp)
@@ -10,7 +11,11 @@ function escapeIcsText(str: string): string {
   return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
 }
 
-export function generateIcsForSessions(sessions: Session[], calendarName = 'Plan Zajęć WIEiK PK'): string {
+export function generateIcsForSessions(
+  sessions: Session[],
+  calendarName = 'Plan Zajęć WIEiK PK',
+  notes?: ScheduleNotes
+): string {
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -25,7 +30,22 @@ export function generateIcsForSessions(sessions: Session[], calendarName = 'Plan
     const startStr = formatIcsDate(s.startTimestamp)
     const endStr = formatIcsDate(s.endTimestamp)
     const summary = `${s.subject} (${s.group})`
-    const description = `Prowadzący: ${s.instructor}\\nKierunek: ${s.faculties.join(', ')}\\nTyp: ${s.groupCategory}\\nCzas: ${s.startTime} - ${s.endTime}`
+    const descParts = [
+      `Prowadzący: ${s.instructor}`,
+      `Kierunek: ${s.faculties.join(', ')}`,
+      `Typ: ${s.groupCategory}`,
+      `Czas: ${s.startTime} - ${s.endTime}`,
+    ]
+    if (notes) {
+      const { sessionNote, subjectNote } = getNotesForSession(s, notes)
+      if (sessionNote) {
+        descParts.push(`Notatka (ten termin): ${sessionNote.text}`)
+      }
+      if (subjectNote) {
+        descParts.push(`Notatka (przedmiot): ${subjectNote.text}`)
+      }
+    }
+    const description = escapeIcsText(descParts.join('\n'))
     const location = s.isRemote ? `MS Teams (Zdalnie: ${s.room})` : `Sala ${s.room}, PK`
 
     lines.push('BEGIN:VEVENT')
@@ -44,8 +64,12 @@ export function generateIcsForSessions(sessions: Session[], calendarName = 'Plan
   return lines.join('\r\n')
 }
 
-export function downloadIcsFile(sessions: Session[], filename = 'plan_zajec_pk.ics'): void {
-  const icsData = generateIcsForSessions(sessions)
+export function downloadIcsFile(
+  sessions: Session[],
+  filename = 'plan_zajec_pk.ics',
+  notes?: ScheduleNotes
+): void {
+  const icsData = generateIcsForSessions(sessions, 'Plan Zajęć WIEiK PK', notes)
   const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')

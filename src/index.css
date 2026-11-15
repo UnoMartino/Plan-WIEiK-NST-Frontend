@@ -278,6 +278,53 @@ input, select, textarea {
   flex-shrink: 0;
 }
 
+/* Visually Hidden (accessible to screen readers & keyboard navigation) */
+.visually-hidden {
+  position: absolute;
+  clip-path: inset(50%);
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+}
+
+.segmented-control-radio:focus-visible + .segmented-control-item {
+  outline: 2px solid var(--apple-blue);
+  outline-offset: 1px;
+}
+
+/* Note Editor Textarea (Auto-sizing with field-sizing: content) */
+.note-textarea {
+  field-sizing: content;
+  height: auto;
+  width: 100%;
+  min-block-size: 3lh;
+  max-block-size: 8lh;
+  font: inherit;
+  font-size: max(1rem, 1em);
+  line-height: 1.45;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-card-secondary);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.note-textarea:focus-visible {
+  outline: 2px solid var(--apple-blue);
+  outline-offset: 1px;
+  border-color: var(--apple-blue);
+}
+
+.note-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
 /* Custom Scrollbar for Apple feel */
 ::-webkit-scrollbar {
   width: 8px;

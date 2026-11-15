@@ -4,8 +4,9 @@ import {
   Calendar,
   ChevronRight,
   Video,
+  StickyNote,
 } from 'lucide-react'
-import type { Session, WeekendZjazd } from '../types/schedule'
+import type { ScheduleNotes, Session, WeekendZjazd } from '../types/schedule'
 import {
   getDaysInMonthGrid,
   isSameDay,
@@ -17,6 +18,7 @@ import {
   getCategoryMeta,
   getSubjectColor,
 } from '../utils/scheduleParser'
+import { getNotesForSession } from '../utils/storage'
 
 interface MonthViewProps {
   selectedDate: string
@@ -25,6 +27,7 @@ interface MonthViewProps {
   zjazdy: WeekendZjazd[]
   onSelectSession: (session: Session) => void
   onSwitchToDayView: () => void
+  notes: ScheduleNotes
 }
 
 const WEEKDAY_NAMES = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb', 'Nd']
@@ -36,6 +39,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
   zjazdy,
   onSelectSession,
   onSwitchToDayView,
+  notes,
 }) => {
   const todayStr = getTodayString()
   const currentDate = new Date(selectedDate + 'T00:00:00')
@@ -319,6 +323,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
               const meta = getCategoryMeta(s.groupCategory)
               const subjectColor = getSubjectColor(s.subject)
               const room = formatRoomDisplay(s.room)
+              const { sessionNote, subjectNote } = getNotesForSession(s, notes)
+              const activeNote = sessionNote || subjectNote
 
               return (
                 <div
@@ -375,6 +381,46 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   >
                     {s.subject}
                   </div>
+
+                  {activeNote && (
+                    <div
+                      style={{
+                        marginBottom: '6px',
+                        padding: '4px 7px',
+                        borderRadius: 'var(--radius-xs)',
+                        backgroundColor: sessionNote
+                          ? 'rgba(255, 149, 0, 0.1)'
+                          : 'rgba(0, 122, 255, 0.08)',
+                        borderLeft: `2.5px solid ${
+                          sessionNote ? 'var(--apple-orange)' : 'var(--apple-blue)'
+                        }`,
+                        fontSize: '11px',
+                        color: 'var(--text-primary)',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '4px',
+                      }}
+                    >
+                      <StickyNote
+                        size={11}
+                        color={sessionNote ? 'var(--apple-orange)' : 'var(--apple-blue)'}
+                        style={{ flexShrink: 0, marginTop: '2px' }}
+                      />
+                      <span
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          lineHeight: 1.35,
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {activeNote.text}
+                      </span>
+                    </div>
+                  )}
 
                   <div
                     style={{

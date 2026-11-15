@@ -1,12 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import type { FilterSettings, RawScheduleItem, Session } from './types/schedule'
+import type { FilterSettings, NoteScope, RawScheduleItem, ScheduleNotes, Session } from './types/schedule'
 import {
   buildWeekendZjazdy,
   parseScheduleData,
   getNearestWeekend,
 } from './utils/scheduleParser'
-import { loadStoredSettings, saveStoredSettings } from './utils/storage'
+import {
+  getNotesForSession,
+  loadStoredNotes,
+  loadStoredSettings,
+  saveStoredSettings,
+} from './utils/storage'
 import { fetchPlanData } from './services/planApi'
+import { fetchServerNotes, updateServerNote } from './services/notesApi'
 import { Header } from './components/Header'
 import { NavigationToolbar } from './components/NavigationToolbar'
 import { DayView } from './components/DayView'
@@ -18,16 +24,17 @@ import { SyncInfoModal } from './components/SyncInfoModal'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 export const App: React.FC = () => {
-  // Load persistent settings from LocalStorage
+  // Load persistent settings and notes from LocalStorage
   const [settings, setSettings] = useState<FilterSettings>(() => loadStoredSettings())
+  const [notes, setNotes] = useState<ScheduleNotes>(() => loadStoredNotes())
   const [rawItems, setRawItems] = useState<RawScheduleItem[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const [cacheInfo, setCacheInfo] = useState<{ source: string; timestamp: number }>({
+  const [cacheInfo, setCacheInfo] = useState<{ source: string; timestamp: number }>(() => ({
     source: 'bundled',
     timestamp: Date.now(),
-  })
+  }))
 
   // Modals state
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
@@ -41,6 +48,13 @@ export const App: React.FC = () => {
       saveStoredSettings(updated)
       return updated
     })
+  }
+
+  // Update or delete a shared note on the server for a specific session or entire subject
+  const handleUpdateNote = async (scope: NoteScope, session: Session, text: string) => {
+    const key = scope === 'session' ? session.id : session.subject.trim()
+    const updatedNotes = await updateServerNote(scope, key, text)
+    setNotes(updatedNotes)
   }
 
   // Manage Device Theme (Auto / Light / Dark)
@@ -80,15 +94,19 @@ export const App: React.FC = () => {
     }
   }, [settings.theme])
 
-  // Initial load
+  // Initial load & refresh
   const loadSchedule = async (forceRefresh = false) => {
     try {
       if (forceRefresh) setIsRefreshing(true)
       else setIsLoading(true)
       setError(null)
 
-      const result = await fetchPlanData(forceRefresh)
+      const [result, serverNotes] = await Promise.all([
+        fetchPlanData(forceRefresh),
+        fetchServerNotes(),
+      ])
       setRawItems(result.data)
+      setNotes(serverNotes)
       setCacheInfo({
         source: result.source,
         timestamp: result.timestamp,
@@ -108,6 +126,14 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     loadSchedule(false)
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchServerNotes().then(setNotes)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
   // Parse raw items to flat sessions
@@ -150,19 +176,23 @@ export const App: React.FC = () => {
       if (settings.roomMode === 'campus' && s.isRemote) return false
       if (settings.roomMode === 'remote' && !s.isRemote) return false
 
-      // 5. Search query
+      // 5. Search query (including attached notes)
       if (settings.searchQuery.trim()) {
         const q = settings.searchQuery.toLowerCase()
         const matchSubject = s.subject.toLowerCase().includes(q)
         const matchTeacher = s.instructor.toLowerCase().includes(q)
         const matchRoom = s.room.toLowerCase().includes(q)
         const matchTitle = s.rawTitle.toLowerCase().includes(q)
-        if (!matchSubject && !matchTeacher && !matchRoom && !matchTitle) return false
+        const { sessionNote, subjectNote } = getNotesForSession(s, notes)
+        const matchNote =
+          Boolean(sessionNote?.text.toLowerCase().includes(q)) ||
+          Boolean(subjectNote?.text.toLowerCase().includes(q))
+        if (!matchSubject && !matchTeacher && !matchRoom && !matchTitle && !matchNote) return false
       }
 
       return true
     })
-  }, [allSessions, settings])
+  }, [allSessions, settings, notes])
 
   // Find current weekend zjazd based on selected date
   const currentWeekend = useMemo(() => {
@@ -222,6 +252,7 @@ export const App: React.FC = () => {
         isRefreshing={isRefreshing}
         activeFilterCount={activeFilterCount}
         filteredSessions={filteredSessions}
+        notes={notes}
         cacheInfo={cacheInfo}
       />
 
@@ -305,6 +336,7 @@ export const App: React.FC = () => {
                   }
                 }}
                 nearestZjazd={nearestZjazd}
+                notes={notes}
               />
             )}
 
@@ -315,6 +347,7 @@ export const App: React.FC = () => {
                 onSelectSession={(s) => setSelectedSession(s)}
                 selectedDate={settings.selectedDate}
                 onSelectDate={(dStr) => handleUpdateSettings({ selectedDate: dStr })}
+                notes={notes}
               />
             )}
 
@@ -326,6 +359,7 @@ export const App: React.FC = () => {
                 zjazdy={zjazdy}
                 onSelectSession={(s) => setSelectedSession(s)}
                 onSwitchToDayView={() => handleUpdateSettings({ viewMode: 'day' })}
+                notes={notes}
               />
             )}
           </>
@@ -343,8 +377,11 @@ export const App: React.FC = () => {
 
       {/* Session Details Modal */}
       <SessionDetailModal
+        key={selectedSession?.id || 'closed'}
         session={selectedSession}
         onClose={() => setSelectedSession(null)}
+        notes={notes}
+        onUpdateNote={handleUpdateNote}
       />
 
       {/* Database & Sync Status Modal */}

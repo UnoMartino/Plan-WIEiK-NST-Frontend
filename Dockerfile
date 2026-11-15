@@ -16,6 +16,8 @@ RUN apk add --no-cache nodejs && mkdir -p /data /app
 ENV NOTES_FILE=/data/notes.json
 ENV NOTES_PORT=3001
 
+VOLUME ["/data"]
+
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY --from=build /app/scripts/notes-server.js /app/notes-server.js
 COPY nginx.conf /etc/nginx/conf.d/default.conf

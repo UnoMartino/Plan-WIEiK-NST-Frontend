@@ -6,4 +6,8 @@ services:
     ports:
       - "8099:80"
     volumes:
-      - ./data:/data
+      - plan-notes-data:/data
+
+volumes:
+  plan-notes-data:
+    name: plan-wieik-notes-data
